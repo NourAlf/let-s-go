@@ -60,7 +60,7 @@ class _NotificationPageState extends State<NotificationPage> {
           Stack(
             children: [
               Container(
-                height: 129,
+                height: MediaQuery.of(context).size.height*0.15,
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   color: Color(0xFF5C955D),
@@ -77,7 +77,7 @@ class _NotificationPageState extends State<NotificationPage> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  icon: const Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back,color: Colors.white,),
                 ),
               ),
               const Positioned(
@@ -125,7 +125,6 @@ class _NotificationPageState extends State<NotificationPage> {
                           padding: const EdgeInsets.all(10),
                           decoration: const BoxDecoration(
                             shape: BoxShape.rectangle,
-                            color: Color(0xffE2D4B0),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,7 +142,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                 notification['body'] ?? '',
                                 style: const TextStyle(
                                   fontSize: 14,
-                                  color: Color(0xff1C680F),
+                                  color: Colors.grey,
                                 ),
                               ),
                             ],

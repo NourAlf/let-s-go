@@ -10,19 +10,48 @@ import'package:http/http.dart' as http;
 
 import 'healthStatus_page.dart';
 
-class HomeNavigation extends StatefulWidget {
+class StudentInfo extends StatefulWidget {
   String? std_id ;
-   HomeNavigation( { Key? key , this.std_id }   ) : super(key: key);
+   StudentInfo( { Key? key , this.std_id }   ) : super(key: key);
 
   @override
-  _HomeNavigationState createState() => _HomeNavigationState();
+  _StudentInfoState createState() => _StudentInfoState();
 }
 
-class _HomeNavigationState extends State<HomeNavigation> {
+class _StudentInfoState extends State<StudentInfo> {
   bool _isLoading = false;
+  String? _commingTime;
+  String? _leavingTime;
   // Function to handle user input changes
-  void onTimeChanged(String value) {
-    setState(() {});
+
+  Future<void> fetchTimes(String? studentId) async {
+    final Future<SharedPreferences> prefs0 = SharedPreferences.getInstance();
+    final SharedPreferences prefs = await prefs0;
+    var url = Uri.parse('https://present-ksa.com/api/student_action');
+    String token = prefs.getString('token')!;
+    var requestBody = jsonEncode({
+      'student_id': studentId,
+    });
+    var response = await http.post(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: requestBody,
+    );
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final String commingTime = jsonResponse['student_action']['comming_time'];
+      final String leavingTime = jsonResponse['student_action']['leaving_time'];
+      setState(() {
+        _commingTime = commingTime;
+        _leavingTime = leavingTime;
+      });
+    } else {
+      throw Exception('Failed to load times');
+    }
   }
   void callStudentAPI(BuildContext context, stdId) async {
     setState(() {
@@ -94,7 +123,7 @@ class _HomeNavigationState extends State<HomeNavigation> {
             Stack(
               children: [
                 Container(
-                  height: 129,
+                  height: MediaQuery.of(context).size.height*0.15,
                   width: double.infinity,
                   decoration: const BoxDecoration(
                     color: Color(0xFF5C955D),
@@ -109,11 +138,9 @@ class _HomeNavigationState extends State<HomeNavigation> {
                   left: 20,
                   child: IconButton(
                     onPressed: () {
-                      Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => StudentsPage()),
-                      );
+                      Navigator.of(context).pop();
                     },
-                    icon: const Icon(Icons.arrow_back),
+                    icon: const Icon(Icons.arrow_back,color: Colors.white,),
                   ),
                 ),
                 const Positioned(
@@ -134,7 +161,7 @@ class _HomeNavigationState extends State<HomeNavigation> {
 
               ],
             ),
-            SizedBox(height: 20,),
+            SizedBox(height: MediaQuery.of(context).size.height*0.03,),
 
             Padding(
               padding: const EdgeInsets.only(left: 20.0),
@@ -144,22 +171,28 @@ class _HomeNavigationState extends State<HomeNavigation> {
                   GestureDetector(
                     child: Container(
                       margin: const EdgeInsets.only(left: 5),
-                      padding: const EdgeInsets.all(10),
+                     // padding: const EdgeInsets.all(10),
                       height: 44,
-                      width: 211,
+                      width: 320,
                       decoration: const BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        color: Color(0xffE2D4B0),
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        color: Color(0xFFD3D3D3)
+
+                        ,
                       ),
                       child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+
+                       // padding: EdgeInsets.all(10),
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.calendar_today_outlined),
+                          SizedBox(width: 10,),
                           Text(
                             "Daily Report",
                             style: TextStyle(
-                              fontSize: 18,
-                              color: Color(0xff1C680F),
+                              fontSize: 16,
+                              color: Colors.black
+                              ,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -167,12 +200,12 @@ class _HomeNavigationState extends State<HomeNavigation> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
                   Container(
                     padding: EdgeInsets.all(30),
                     margin: EdgeInsets.only(left: 10, right:10),
-                    width: 325,
-                    height: 120,
+                    width: 340,
+                    height: 150,
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -186,25 +219,38 @@ class _HomeNavigationState extends State<HomeNavigation> {
                     ),
                     child: Row(
                       children: [
-                        Container(width: 125,height: 60, color: Color(0xffE2D4B0),child: Center(child:
-                        Text(textAlign: TextAlign.center,"Arriving time not available Now"
+                        Container(width: 125,height: 100,  decoration: const BoxDecoration(
+    borderRadius: BorderRadius.all(Radius.circular(20)),
+    color: Color(0xFFD3D3D3)
+
+    ,
+    ),child: Center(child:
+                        Text("Leaving time\n $_leavingTime"  ?? "Leaving time didn't leaving time",
+                            style: TextStyle(fontSize: 16),
+                            textAlign: TextAlign.center,
                             ),),),
                         SizedBox(width: 10,),
-                        Container(width: 125,height: 60, color: Color(0xffE2D4B0),child: Center(child:
-                        Text(textAlign: TextAlign.center,"Arriving time not available Now"
+                        Container(width: 125,height: 100,  decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          color: Color(0xFFD3D3D3)
+
+                          ,
+                        ),child: Center(child:
+                        Text( style: TextStyle(fontSize: 16),textAlign: TextAlign.center, "Comming time\n $_commingTime " ?? "Comming time didn't Comming yet",
+
                         ),),),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
                   Container(
                     margin: const EdgeInsets.only(left: 5),
-                    padding: const EdgeInsets.all(10),
+                   // padding: const EdgeInsets.all(10),
                     height: 44,
-                    width: 211,
+                    width: 320,
                     decoration: const BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      color: Color(0xffE2D4B0),
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        color: Color(0xFFD3D3D3)
                     ),
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -214,7 +260,7 @@ class _HomeNavigationState extends State<HomeNavigation> {
                           " Services ",
                           style: TextStyle(
                             fontSize: 18,
-                            color: Color(0xff1C680F),
+                            color: Colors.black,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -229,28 +275,35 @@ class _HomeNavigationState extends State<HomeNavigation> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
            //   crossAxisAlignment: CrossAxisAlignment.baseline,
               children: [
-                CustomContainer(text: "Health Status", image: 'heart.png',onPressed: (){
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=> HeathStatus(std_id: widget.std_id)));
-                  // Navigator.of(context).pushReplacementNamed('healthstatus');
-                },) ,
-                CustomContainer(text: 'Permission', image: 'access.png',onPressed: (){
+
+                CustomContainer(
+                  text: "Health Status",
+                  image: 'h.svg',
+                  onPressed: (){
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=> HeathStatus(std_id: widget.std_id)));
+                    // Navigator.of(context).pushReplacementNamed('healthstatus');
+                  },
+                  icon: null,
+                ),
+                CustomContainer(text: 'Permission', image: 'perm.svg',onPressed: (){
                   Navigator.of(context).push(MaterialPageRoute(builder: (context)=> EarllyCall(std_id: widget.std_id)))
     ;
 
 
 
-                },),
+                }, icon: null,),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               //   crossAxisAlignment: CrossAxisAlignment.baseline,
               children: [
-                CustomContainer(text: "Tracking", image: 'SD.png',onPressed: (){
+                CustomContainer( icon: null,text: "Tracking", image: 'tracking.svg',onPressed: (){
                   Navigator.of(context).push(MaterialPageRoute(builder: (context)=> const TrackingPage()));},),
            CustomContainer(
              text: 'Call',
-              image: 'phone.jpg',
+                icon: null,
+              image: 'phone.svg',
               onPressed:  (){callStudentAPI(context,widget.std_id);}  , // Disable button when loading
    // Pass the loading state to the widget
     ),

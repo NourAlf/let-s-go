@@ -88,7 +88,7 @@ class _EarllyCallState extends State<EarllyCall> {
                 top: 30,
                 left: 20,
                 child: IconButton(
-                  onPressed: () {Navigator.of(context).push(MaterialPageRoute(builder: (context)=> HomeNavigation()));},
+                  onPressed: () {Navigator.of(context).push(MaterialPageRoute(builder: (context)=> StudentInfo()));},
                   icon: const Icon(Icons.arrow_back),
                 ),
               ),
@@ -249,7 +249,7 @@ class _EarllyCallState extends State<EarllyCall> {
                               : OutlinedButton(
                             onPressed: () {
                               sendData();
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomeNavigation()));
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>StudentInfo()));
                             },
                             style: OutlinedButton.styleFrom(
                               foregroundColor: Colors.white,

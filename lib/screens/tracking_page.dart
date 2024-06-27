@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:letsgohome/screens/home_nav_bar.dart';
+import 'package:letsgohome/screens/settingsPage.dart';
 
 class TrackingPage extends StatefulWidget {
   const TrackingPage({super.key});
@@ -85,11 +86,9 @@ class _TrackingPageState extends State<TrackingPage> {
                 left: 20,
                 child: IconButton(
                   onPressed: () {
-                    Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => HomeNavigation()),
-                    );
+                    Navigator.of(context).pop();
   },
-                  icon: const Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back,color: Colors.white,),
                 ),
               ),
               const Positioned(

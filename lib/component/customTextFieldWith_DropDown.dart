@@ -135,7 +135,7 @@ class CustomTextFieldDrop2 extends StatelessWidget {
       child: DropdownButtonFormField<String>(
         value: controller.commingAlarmController.value,
         onChanged:(value) {
-          controller.handleDropdownChangeComming;
+          controller.handleDropdownChangeComming(value);
         } ,
         decoration: InputDecoration(
           prefixIcon: Icon(prefixIcon, color: Colors.black),
@@ -210,7 +210,7 @@ class CustomTextFieldDrop3 extends StatelessWidget {
       child: DropdownButtonFormField<String>(
         value: controller.outAlarmController.value,
         onChanged:(value) {
-          controller.handleDropdownChangeOut;
+          controller.handleDropdownChangeOut(value);
         } ,
         decoration: InputDecoration(
           prefixIcon: Icon(prefixIcon, color: Colors.black),

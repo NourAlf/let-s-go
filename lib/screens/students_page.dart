@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:letsgohome/screens/scaneQR_page.dart';
@@ -20,6 +21,8 @@ class StudentsPage extends StatefulWidget {
 class _StudentsPageState extends State<StudentsPage> {
   List<AddStudentModel> children = [];
   bool isLoading = false;
+  String noChildrenMessage = '';
+  String parentIdMessage = '';
 
   @override
   void initState() {
@@ -36,106 +39,49 @@ class _StudentsPageState extends State<StudentsPage> {
     final SharedPreferences prefs = await prefs0;
     String token = prefs.getString('token')!;
     print("$childrenUrl/$parentId / $token");
-    try {
-      final response = await http.post(Uri.parse(childrenUrl),
-          headers: {'Authorization': 'Bearer $token'}, body: {'id': parentId});
 
-      if (response.statusCode == 200) {
-        if (kDebugMode) {
-          print(" 65454 ${response.body} ${response.statusCode} ");
-        }
-        List<AddStudentModel> childrenList = [];
-        Map<String, dynamic> responseData = jsonDecode(response.body);
-        List<dynamic> responsChildrenData = responseData['students'];
-        for (var childData in responsChildrenData) {
-          AddStudentModel child = AddStudentModel.fromJson(childData);
-          childrenList.add(child);
-        }
-        return childrenList;
-      } else {
-        throw Exception('Failed to fetch children');
+    final response = await http.post(Uri.parse(childrenUrl),
+        headers: {'Authorization': 'Bearer $token'}, body: {'id': parentId});
+
+    if (response.statusCode == 200) {
+      if (kDebugMode) {
+        print(" 65454 ${response.body} ${response.statusCode} ");
       }
-    } catch (e) {
-      print('Error fetching children: $e');
-      return [];
+      List<AddStudentModel> childrenList = [];
+      Map<String, dynamic> responseData = jsonDecode(response.body);
+      List<dynamic> responsChildrenData = responseData['students'];
+      for (var childData in responsChildrenData) {
+        AddStudentModel child = AddStudentModel.fromJson(childData);
+        childrenList.add(child);
+      }
+      return childrenList;
+    } else {
+      throw Exception('Failed to fetch children');
     }
   }
 
   Future<void> fetchChildrenData() async {
-    try {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      final String? parentId = prefs.getString('Parent_id');
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? parentId = prefs.getString('Parent_id');
 
-      if (parentId != null) {
-        setState(() {
-          isLoading = true;
-        });
+    if (parentId != null) {
+      setState(() {
+        isLoading = true;
+      });
 
-        final List<AddStudentModel> fetchedChildren =
-        await getChildren(parentId);
+      final List<AddStudentModel> fetchedChildren = await getChildren(parentId);
 
-        setState(() {
-          children = fetchedChildren;
-          isLoading = false;
-        });
-
-        if (children.isEmpty) {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('No Children Found'),
-                content: const Text('You do not have any children in the schools.'),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('OK'),
-                  ),
-                ],
-              );
-            },
-          );
-        }
-      } else {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Parent ID Not Found'),
-              content: const Text('Failed to retrieve parent ID.'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      }
-    } catch (e) {
-      print('Error fetching parent ID: $e');
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Error'),
-            content: Text('Failed to retrieve parent ID: $e'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
+      setState(() {
+        children = fetchedChildren;
+        isLoading = false;
+        noChildrenMessage = children.isEmpty
+            ? 'You do not have any children in the schools.'
+            : '';
+      });
+    } else {
+      setState(() {
+        parentIdMessage = 'Failed to retrieve parent ID.';
+      });
     }
   }
 
@@ -144,68 +90,35 @@ class _StudentsPageState extends State<StudentsPage> {
     return Scaffold(
       body: Column(
         children: [
-          Stack(
-            children: [
-              Container(
-                height: 200,
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF5C955D),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(30.0),
-                    bottomRight: Radius.circular(30.0),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 20,
-                left: 20,
-                child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.arrow_back),
-                ),
-              ),
-              const Positioned(
-                top: 40,
-                left: 50,
-                right: 50,
-                child: Center(
-                  child: Text(
-                    "Home",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                    ),
-                  ),
-                ),
-              ),
-              const Positioned(
-                top: 130,
-                left: 27,
-                child: Text(
-                  "Menu of Students",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              const Positioned(
-                top: 170,
-                left: 27,
-                child: Text(
-                  "You can choose the student ",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
-          ),
+           Container(
+             height: MediaQuery.of(context).size.height*0.15,
+             width: double.infinity,
+             decoration: const BoxDecoration(
+               color: Color(0xFF5C955D),
+               borderRadius: BorderRadius.only(
+                 bottomLeft: Radius.circular(30.0),
+                 bottomRight: Radius.circular(30.0),
+               ),
+             ),
+             child: const Center(
+               child: Text(
+                 "Home",
+                 style: TextStyle(
+                   color: Colors.white,
+                   fontWeight: FontWeight.bold,
+                   fontSize: 24,
+                 ),
+               ),
+             ),
+           ),
           const SizedBox(height: 30),
+          // const Text(
+          //   "You can choose the student ",
+          //   style: TextStyle(
+          //     fontSize: 14,
+          //     color: Color(0xFF5C955D),
+          //   ),
+          // ),
           Container(
             width: 250,
             height: 50,
@@ -213,7 +126,7 @@ class _StudentsPageState extends State<StudentsPage> {
               color: const Color(0xFF5C955D),
               borderRadius: const BorderRadius.all(Radius.circular(8)),
               border: Border.all(
-                color: Colors.green,
+                color: Colors.white,
                 width: 2,
               ),
             ),
@@ -237,6 +150,29 @@ class _StudentsPageState extends State<StudentsPage> {
               ),
             ),
           ),
+          const SizedBox(height: 10),
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 18.0,vertical: 8),
+                child: Text(
+                "List of Students",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color:  Color(0xFF5C955D),
+                ),),
+              ),
+            ]
+          ),
+          Text(
+            noChildrenMessage.isNotEmpty ? noChildrenMessage : parentIdMessage,
+            style: const TextStyle(
+              color: Colors.red,
+              fontSize: 16,
+            ),
+          ),
           Expanded(
             flex: 1,
             child: isLoading
@@ -254,30 +190,29 @@ class _StudentsPageState extends State<StudentsPage> {
                   child: OutlinedButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => HomeNavigation(
+                          builder: (context) => StudentInfo(
                             std_id: children[index].id!,
                           )));
                     },
                     style: OutlinedButton.styleFrom(
-                      foregroundColor:const Color(0xFF5C955D),
+                      foregroundColor:const   Color(0xFFD3D3D3),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                     child: ListTile(
-                      leading: Image.asset('assets/student.png',
-                          width: 20, height: 20),
-                      title: Text(children[index].name ?? " fffff"),
+                      leading: const Icon(Icons.person,color: Color(0xFF5C955D),),
+                      title: Text(children[index].name ?? "",style: const TextStyle(fontSize: 18,color: Colors.black),),
                     ),
                   ),
                 );
               },
             ),
           ),
-
-
         ],
       ),
     );
   }
 }
+
+

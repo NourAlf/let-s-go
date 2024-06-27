@@ -43,7 +43,22 @@ class AddStudentModel {
     required this.first_aid,
   });
 
+  // دالة لمعالجة السلسلة النصية للأيام بغض النظر عن الصيغة
+  static List<String> parseDays(String daysString) {
+    try {
+      // محاولة فك الترميز مباشرةً
+      return List<String>.from(jsonDecode(daysString));
+    } catch (e) {
+      // إذا فشل فك الترميز، معالجة السلسلة النصية
+      daysString = daysString.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(', ', '","');
+      return List<String>.from(jsonDecode(daysString));
+    }
+  }
+
   factory AddStudentModel.fromJson(Map<String, dynamic> json) {
+    String daysString = json['days'];
+    daysString = daysString.replaceAll('[', '["').replaceAll(']', '"]').replaceAll(', ', '","');
+
     return AddStudentModel(
       id: json['id'].toString(),
       student_code: json['student_code'].toString(),
@@ -53,7 +68,7 @@ class AddStudentModel {
       branch: json['branch'].toString(),
       birthdate: json['birthdate'].toString(),
       nationality: json['nationality'].toString(),
-      days: List<String>.from(jsonDecode(json['days'])),
+      days: parseDays(json['days']),
       out_time: json['out_time'].toString(),
       comming_time: json['comming_time'].toString(),
       out_alarm: json['out_alarm'] == 1,
@@ -80,8 +95,8 @@ class AddStudentModel {
       'days': jsonEncode(days),
       'out_time': out_time,
       'comming_time': comming_time,
-      'out_alarm': out_alarm ? 1 : 0,
-      'comming_alarm': comming_alarm ? 1 : 0,
+      'out_alarm': out_alarm ? "1" : "0",
+      'comming_alarm': comming_alarm ? "1" : "0",
       'h_center': h_center,
       'height': height,
       'weight': weight,

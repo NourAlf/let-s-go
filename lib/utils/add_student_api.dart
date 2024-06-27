@@ -22,9 +22,9 @@ String token = prefs.getString('token')!;
         var url = Uri.parse(ApiEndPoints.baseUrl + ApiEndPoints.auth.addStudent);
 
 
-        Map<String, dynamic> body = jsonPayload;
+        // Map<String, dynamic> body = jsonPayload;
 
-        http.Response response = await http.post(url, body: body, headers: headers);
+        http.Response response = await http.post(url, body: jsonPayload, headers: headers);
 
         print(" respppppponse = ${response.body}");
         if (response.statusCode == 200) {

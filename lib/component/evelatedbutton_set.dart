@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class ElevatedButtonWidget extends StatelessWidget {
-  final String image;
+  final IconData icon;
   final String text;
   final VoidCallback onPressed;
 
-  const ElevatedButtonWidget({Key? key, required this.image, required this.text, required this.onPressed})
+  const ElevatedButtonWidget({Key? key, required this.icon, required this.text, required this.onPressed})
       : super(key: key);
 
   @override
@@ -40,11 +40,7 @@ class ElevatedButtonWidget extends StatelessWidget {
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                 ),
-                child: Image.asset(
-                  'assets/$image',
-                  width: 20,
-                  height: 20,
-                ),
+                child: Icon(icon,color: const Color(0xFF5C955D)),
               ),
               const SizedBox(width: 18.0),
               Text(

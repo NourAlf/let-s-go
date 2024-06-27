@@ -24,8 +24,8 @@ class AddStudentPage extends StatefulWidget {
 class _AddStudentPageState extends State<AddStudentPage> {
   final AddStudentPost addStudentPost = AddStudentPost();
   List<String> selectedDays = [];
-  List<String> alarm =["On","OFF"];
-  String? selectedValue= "On";
+  List<String> alarm = ["On", "OFF"];
+  String? selectedValue = "On";
   List<String> allDays = [
     'Monday',
     'Tuesday',
@@ -58,8 +58,9 @@ class _AddStudentPageState extends State<AddStudentPage> {
   TimeOfDay commingTime = TimeOfDay.now();
   TimeOfDay time = TimeOfDay.now();
   DateTime selectedDate = DateTime.now();
-   bool outAlarm = false;
-   bool commingAlarm = false;
+  bool outAlarm = false;
+  bool commingAlarm = false;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -126,320 +127,343 @@ class _AddStudentPageState extends State<AddStudentPage> {
             ],
           ),
           Expanded(
-            child: ListView(
-              padding: EdgeInsets.all(30),
-              children: [
-                const SizedBox(height: 10,),
-                CustomTextField(
-                  prefixIcon: Icons.person_rounded,
-                  labelText: "Full Name",
-                  controller: fullnameController,
-                ),
-                SizedBox(height: 15,),
-
-    Obx(() => Container(
-    decoration: BoxDecoration(
-    border: Border.all(color: Colors.grey, width: 2.0),
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(20),
-    ),
-    padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
-    child: CustomDropdownButton(
-    items: convertSchoolControllerToList(schoolController.schoolData),
-    selectedItemId: dropdownController.selectedItemId.value,
-    onChanged: (value) {
-    if (value != null) {
-    dropdownController.setSelectedItemId(value);
-    }
-    },
-    ),
-    )),
-    SizedBox(height: 15,),
-
-    Obx(() => CustomTextFieldDrop1(
-    prefixIcon: Icons.leaderboard,
-    selectedOption: schoolController.levelController.value,
-    labelText: "Level",
-    onChanged: schoolController.handleDropdownChangeLevel,
-    options: <String>['Elementary', 'Middle', 'High']
-        .map((String value) => {'id': value, 'name': value})
-        .toList(),
-    controller: schoolController,
-    )),
-                CustomTextField(
-                  prefixIcon: Icons.add,
-                  labelText: "Branch",
-                  controller: branchController,
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 15,),
-                Container(
-                  width: 250,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey, width: 2),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: Icon(Icons.calendar_today, color: Colors.black), // Add your desired prefix icon here
-                      ),
-                      Expanded(
-                        child: MultiSelectDialogField(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.transparent),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          buttonText: Text(
-                            "Select Days",
-                            style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
-                          ),
-                          title: Text(
-                            "Days",
-                            style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
-                          ),
-                          items: allDays.map((day) => MultiSelectItem(day, day)).toList(),
-                          listType: MultiSelectListType.LIST,
-                          onConfirm: (values) {
-                            setState(() {
-                              selectedDays = List<String>.from(values);
-                            });
-                          },
-                          initialValue: selectedDays,
-                          itemsTextStyle: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-
-                // SizedBox(height: 20),
-                // Obx(() => Text(
-                //   'Selected Days: ${schoolController.selectedDays.join(', ')}',
-                //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                // )),
-
-
-
-
-                const SizedBox(height: 15,),
-                CustomTextField(
-                  prefixIcon: Icons.business_rounded,
-                  labelText: "Nationality",
-                  controller: nationalityController,
-                ),
-                const SizedBox(height: 15,),
-                CustomTextField(
-                  prefixIcon: Icons.height_outlined,
-                  labelText: "Height",
-                  controller: heightController,
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 10,),
-                CustomTextField(
-                  prefixIcon: Icons.line_weight,
-                  labelText: "Weight",
-                  controller: weightController,
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 10,),
-                CustomTextField(
-                  prefixIcon: Icons.sick_rounded,
-                  labelText: "Illness Type",
-                  controller: illnessTypeController,
-                ),
-                const SizedBox(height: 10,),
-                CustomTextField(
-                  prefixIcon: Icons.line_weight,
-                  labelText: "Symptoms",
-                  controller: symptomsController,
-                ),
-                const SizedBox(height: 10,),
-                CustomTextField(
-                  prefixIcon: Icons.line_weight,
-                  labelText: "First Aid",
-                  controller: firstAidController,
-                ),
-                const SizedBox(height: 15,),
-                CustomTextField(
-                  prefixIcon: Icons.add_business,
-                  labelText: "Health Center",
-                  controller: centerController,
-                ),
-                const SizedBox(height: 15,),
-                Container(
-                  padding: EdgeInsets.all(8),
-                  width: 250,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.white70,
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                    border: Border.all(),
-                  ),
-                  child: Row(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () async {
-                          final DateTime? day = await showDatePicker(
-                            context: context,
-                            initialDate: selectedDate,
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                          );
-
-                          if (day != null) {
-                            setState(() {
-                              selectedDate = day;
-                            });
-                          }
-                        },
-                        child: Text("Define BirthDay",style: TextStyle(color: Colors.black54,fontSize: 14),),
-                      ),
-                      Spacer(),
-                      Text(" ${selectedDate.toLocal().toString().split(' ')[0]}"),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 15,),
-                Container(
-                  padding: EdgeInsets.all(8),
-                  width: 250,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.white70,
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                    border: Border.all(),
-                  ),
-                  child: Row(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () async {
-                          final TimeOfDay? commingTime1 = await showTimePicker(
-                            context: context,
-                            initialTime: commingTime,
-                            initialEntryMode: TimePickerEntryMode.input,
-                          );
-                          if (commingTime1 != null) {
-                            setState(() {
-                              commingTime = commingTime1;
-                            });
-                          }
-                        },
-                        child: Text("Select CommingTime ",style: TextStyle(color: Colors.black54,fontSize: 14),),
-                      ),
-                      Spacer(),
-                      Text(" ${commingTime.format(context)}"),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 15,),
-                CustomTextFieldDrop2(
-                  prefixIcon: Icons.alarm,
-                  labelText: "Comming Alarm",
-                  onChanged: schoolController.handleDropdownChangeComming,
-                  options: <String>['OFF', 'On']
-                      .map((String value) => {'id': value, 'name': value})
-                      .toList(), controller: schoolController,
-                ),
-                // Container(
-                //   height: 60,
-                //   width: 250,
-                //   decoration: BoxDecoration(
-                //    color: Colors.white70,
-                //   borderRadius: BorderRadius.all(Radius.circular(20)),
-                //   border: Border.all(),
-                //   ),
-                //   child: Row(
-                //     children: [
-                //       Text("Out Alarm  ",style: TextStyle(fontSize: 20),),
-                //       SizedBox(width: 50,),
-                //       DropdownButton(value: selectedValue,
-                //           items: alarm.map((item) => DropdownMenuItem(
-                //               value: item,
-                //               child: Text(item ,style: TextStyle(color: Colors.black,fontSize: 20,)))).toList() ,
-                //         onChanged: (item) => setState(() => selectedValue = item),
-                //           ),
-                //     ],
-                //   ),
-                // ),
-              //  SizedBox(height: 15,),
-                Container(
-                  //margin: EdgeInsets.all(10),
-                  padding: EdgeInsets.all(10),
-                  width: 250,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.white70,
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                    border: Border.all(),
-                  ),
-                  child: Row(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () async {
-                          final TimeOfDay? timeofDay = await showTimePicker(
-                            context: context,
-                            initialTime: time,
-                            initialEntryMode: TimePickerEntryMode.input,
-                          );
-                          if (timeofDay != null) {
-                            setState(() {
-                              time = timeofDay;
-                            });
-                          }
-                        },
-                        child: Text("Select OutTime ",style: TextStyle(color: Colors.black54,fontSize: 14),),
-                      ),
-                      Spacer(),
-                      Text(" ${time.format(context)}"),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 15,),
-                CustomTextFieldDrop3(
-                  prefixIcon: Icons.alarm,
-                  labelText: "Out Alarm",
-                  onChanged: schoolController.handleDropdownChangeOut,
-                  options: <String>['OFF', 'On']
-                      .map((String value) => {'id': value, 'name': value})
-                      .toList(), controller: schoolController,
-                ),
-               // SizedBox(height: 15,),
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 20),
-                  width: 250,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF5C955D),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Colors.green,
-                      width: 2,
-                    ),
-                  ),
-                  child: InkWell(
-                    onTap: () async {
-                      bool success = await saveStudent(widget.studentCode);
-                      if (success) {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => StudentsPage()));
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                padding: EdgeInsets.all(30),
+                children: [
+                  const SizedBox(height: 10,),
+                  CustomTextField(
+                    prefixIcon: Icons.person_rounded,
+                    labelText: "Full Name",
+                    controller: fullnameController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the full name';
                       }
+                      return null;
                     },
-                    child: const Center(
-                      child: Text(
-                        "Save",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                  ),
+                  SizedBox(height: 15,),
+                  Obx(() => Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey, width: 2.0),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+                    child: CustomDropdownButton(
+                      items: convertSchoolControllerToList(schoolController.schoolData),
+                      selectedItemId: dropdownController.selectedItemId.value,
+                      onChanged: (value) {
+                        if (value != null) {
+                          dropdownController.setSelectedItemId(value);
+                        }
+                      },
+                    ),
+                  )),
+                  SizedBox(height: 15,),
+                  Obx(() => CustomTextFieldDrop1(
+                    prefixIcon: Icons.leaderboard,
+                    selectedOption: schoolController.levelController.value,
+                    labelText: "Level",
+                    onChanged: schoolController.handleDropdownChangeLevel,
+                    options: <String>['Elementary', 'Middle', 'High']
+                        .map((String value) => {'id': value, 'name': value})
+                        .toList(),
+                    controller: schoolController,
+                  )),
+                  CustomTextField(
+                    prefixIcon: Icons.add,
+                    labelText: "Branch",
+                    controller: branchController,
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the branch';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 15,),
+                  Container(
+                    width: 250,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey, width: 2),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Icon(Icons.calendar_today, color: Colors.black), // Add your desired prefix icon here
+                        ),
+                        Expanded(
+                          child: MultiSelectDialogField(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.transparent),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            buttonText: Text(
+                              "Select Days",
+                              style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+                            ),
+                            title: Text(
+                              "Days",
+                              style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+                            ),
+                            items: allDays.map((day) => MultiSelectItem(day, day)).toList(),
+                            listType: MultiSelectListType.LIST,
+                            onConfirm: (values) {
+                              setState(() {
+                                selectedDays = List<String>.from(values);
+                              });
+                            },
+                            initialValue: selectedDays,
+                            itemsTextStyle: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 15,),
+                  CustomTextField(
+                    prefixIcon: Icons.business_rounded,
+                    labelText: "Nationality",
+                    controller: nationalityController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the nationality';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 15,),
+                  CustomTextField(
+                    prefixIcon: Icons.height_outlined,
+                    labelText: "Height",
+                    controller: heightController,
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the height';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10,),
+                  CustomTextField(
+                    prefixIcon: Icons.line_weight,
+                    labelText: "Weight",
+                    controller: weightController,
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the weight';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10,),
+                  CustomTextField(
+                    prefixIcon: Icons.sick_rounded,
+                    labelText: "Illness Type",
+                    controller: illnessTypeController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the illness type';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10,),
+                  CustomTextField(
+                    prefixIcon: Icons.line_weight,
+                    labelText: "Symptoms",
+                    controller: symptomsController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the symptoms';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10,),
+                  CustomTextField(
+                    prefixIcon: Icons.line_weight,
+                    labelText: "First Aid",
+                    controller: firstAidController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the first aid details';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 15,),
+                  CustomTextField(
+                    prefixIcon: Icons.add_business,
+                    labelText: "Health Center",
+                    controller: centerController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the health center';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 15,),
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    width: 250,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.white70,
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      border: Border.all(),
+                    ),
+                    child: Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () async {
+                            final DateTime? day = await showDatePicker(
+                              context: context,
+                              initialDate: selectedDate,
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2100),
+                            );
+
+                            if (day != null) {
+                              setState(() {
+                                selectedDate = day;
+                              });
+                            }
+                          },
+                          child: Text("Define BirthDay", style: TextStyle(color: Colors.black54, fontSize: 14),),
+                        ),
+                        Spacer(),
+                        Text(" ${selectedDate.toLocal().toString().split(' ')[0]}"),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 15,),
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    width: 250,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.white70,
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      border: Border.all(),
+                    ),
+                    child: Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () async {
+                            final TimeOfDay? commingTime1 = await showTimePicker(
+                              context: context,
+                              initialTime: commingTime,
+                              initialEntryMode: TimePickerEntryMode.input,
+                            );
+                            if (commingTime1 != null) {
+                              setState(() {
+                                commingTime = commingTime1;
+                              });
+                            }
+                          },
+                          child: Text("Select CommingTime ", style: TextStyle(color: Colors.black54, fontSize: 14),),
+                        ),
+                        Spacer(),
+                        Text(" ${commingTime.format(context)}"),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 15,),
+                  CustomTextFieldDrop2(
+                    prefixIcon: Icons.alarm,
+                    labelText: "Comming Alarm",
+                    selectedOption: schoolController.commingAlarmController.value,
+                    onChanged: schoolController.handleDropdownChangeComming,
+                    options: <String>['OFF', 'On']
+                        .map((String value) => {'id': value, 'name': value})
+                        .toList(), controller: schoolController,
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    width: 250,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.white70,
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      border: Border.all(),
+                    ),
+                    child: Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () async {
+                            final TimeOfDay? timeofDay = await showTimePicker(
+                              context: context,
+                              initialTime: time,
+                              initialEntryMode: TimePickerEntryMode.input,
+                            );
+                            if (timeofDay != null) {
+                              setState(() {
+                                time = timeofDay;
+                              });
+                            }
+                          },
+                          child: Text("Select OutTime ", style: TextStyle(color: Colors.black54, fontSize: 14),),
+                        ),
+                        Spacer(),
+                        Text(" ${time.format(context)}"),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 15,),
+                  CustomTextFieldDrop3(
+                    prefixIcon: Icons.alarm,
+                    labelText: "Out Alarm",
+                    selectedOption: schoolController.outAlarmController.value,
+                    onChanged: schoolController.handleDropdownChangeOut,
+                    options: <String>['OFF', 'On']
+                        .map((String value) => {'id': value, 'name': value})
+                        .toList(), controller: schoolController,
+                  ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 20),
+                    width: 250,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF5C955D),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Colors.green,
+                        width: 2,
+                      ),
+                    ),
+                    child: InkWell(
+                      onTap: () async {
+                        if (_formKey.currentState!.validate()) {
+                          bool success = await saveStudent(widget.studentCode);
+                          if (success) {
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => StudentsPage()));
+                          }
+                        }
+                      },
+                      child: const Center(
+                        child: Text(
+                          "Save",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
                   ),
-
-                ),
-              ],
+                ],
+              ),
             ),
           )
         ],
@@ -452,12 +476,6 @@ class _AddStudentPageState extends State<AddStudentPage> {
     print('level Selected value: $levelselectedValue');
   }
 
-  // void handleDropdownChangeSchool(String? schoolselectedValue) {
-  //
-  //   schoolIdController.text = schoolselectedValue!;
-  //   print('School Selected value: $schoolselectedValue');
-  // }
-
   List<Map<String, String>> convertSchoolControllerToList(RxList schoolData) {
     List<Map<String, String>> resultList = [];
     for (var element in schoolData) {
@@ -469,127 +487,44 @@ class _AddStudentPageState extends State<AddStudentPage> {
     return resultList;
   }
 
-  void handleDropdownChangeOut(String? selectedChangeOutOption) {
-    if (selectedChangeOutOption == null) return;
-
-    if (selectedChangeOutOption == 'OFF') {
-      outAlarm = false;
-    } else if (selectedChangeOutOption == 'On') {
-      outAlarm = true;
-    }
-  }
   Future<bool> saveStudent([String? studentCode]) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? parentId = prefs.getString('Parent_id');
 
-    try {
-      // Check if birthdate is before today
-      if (selectedDate.isAfter(DateTime.now())) {
-        throw "The birthdate field must be a date before today.";
-      }
-
-      // Ensure that required fields are not empty
-      if (dropdownController.selectedItemId.value!.isEmpty || schoolController.levelController.value.isEmpty) {
-        throw "School and level must be selected.";
-      }
-
-      // Ensure that out_alarm and comming_alarm are set to true or false
-      final outAlarmValue = outAlarm ? 'true' : 'false';
-      final commingAlarmValue = commingAlarm ? 'true' : 'false';
-
-      AddStudentModel std = AddStudentModel(
-        id: parentId!,
-        student_code: widget.studentCode,
-        school_id: dropdownController.selectedItemId.value ?? '',
-        name: fullnameController.text,
-        level: schoolController.levelController.value,
-        branch: branchController.text,
-        birthdate: selectedDate.toLocal().toString().split(' ')[0],
-        nationality: nationalityController.text,
-        days: selectedDays,
-        out_time: time.format(context),
-        comming_time: commingTime.format(context),
-        out_alarm: outAlarmValue as bool ,
-        comming_alarm: commingAlarmValue as bool ,
-        h_center: centerController.text,
-        height: heightController.text,
-        weight: weightController.text,
-        illnes_type: illnessTypeController.text,
-        symptoms: symptomsController.text,
-        first_aid: firstAidController.text,
-      );
-
-      await addStudentPost.addStudent(std);
-      return true;  // Indicating the addition was successful
-    } catch (error) {
-      print("error: $error");
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Error"),
-            content: Text("An error occurred: $error"),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text("OK"),
-              ),
-            ],
-          );
-        },
-      );
-      return false;  // Indicating the addition failed
+    if (selectedDate.isAfter(DateTime.now())) {
+      throw "The birthdate field must be a date before today.";
     }
+
+    if (dropdownController.selectedItemId.value!.isEmpty || schoolController.levelController.value.isEmpty) {
+      throw "School and level must be selected.";
+    }
+
+    final outAlarmValue = (schoolController.outAlarmController.value == 'On') ? true : false;
+    final commingAlarmValue = (schoolController.commingAlarmController.value == 'On') ? true : false;
+
+    AddStudentModel std = AddStudentModel(
+      id: parentId!,
+      student_code: widget.studentCode,
+      school_id: dropdownController.selectedItemId.value ?? '',
+      name: fullnameController.text,
+      level: schoolController.levelController.value,
+      branch: branchController.text,
+      birthdate: selectedDate.toLocal().toString().split(' ')[0],
+      nationality: nationalityController.text,
+      days: selectedDays,
+      out_time: time.format(context),
+      comming_time: commingTime.format(context),
+      out_alarm: outAlarmValue,
+      comming_alarm: commingAlarmValue,
+      h_center: centerController.text,
+      height: heightController.text,
+      weight: weightController.text,
+      illnes_type: illnessTypeController.text,
+      symptoms: symptomsController.text,
+      first_aid: firstAidController.text,
+    );
+
+    await addStudentPost.addStudent(std);
+    return true;
   }
-  // Future<bool> saveStudent([String? studentCode]) async {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   final String? parentId = prefs.getString('Parent_id');
-  //
-  //   // Check if birthdate is before today
-  //   if (selectedDate.isAfter(DateTime.now())) {
-  //     throw "The birthdate field must be a date before today.";
-  //   }
-  //
-  //   // Ensure that required fields are not empty
-  //   if (dropdownController.selectedItemId.value == null || dropdownController.selectedItemId.value!.isEmpty || schoolController.levelController.value.isEmpty) {
-  //     throw "School and level must be selected.";
-  //   }
-  //
-  //   // Ensure that out_alarm and comming_alarm are set to true or false
-  //   final outAlarmValue = outAlarmController.text.toLowerCase() == 'on' ? true : false;
-  //   final commingAlarmValue = commingAlarmController.text.toLowerCase() == 'on' ? true : false;
-  //
-  //   AddStudentModel std = AddStudentModel(
-  //     id: parentId ?? '', // Provide a default value or handle null case as needed
-  //     student_code: studentCode ?? '', // Provide a default value or handle null case as needed
-  //     school_id: dropdownController.selectedItemId.value ?? '', // Ensure this is non-null
-  //     name: fullnameController.text,
-  //     level: schoolController.levelController.value,
-  //     branch: branchController.text,
-  //     birthdate: selectedDate.toLocal().toString().split(' ')[0],
-  //     nationality: nationalityController.text,
-  //     days: selectedDays,
-  //     out_time: time.format(context),
-  //     comming_time: commingTime.format(context),
-  //     out_alarm: outAlarmValue,
-  //     comming_alarm: commingAlarmValue,
-  //     h_center: centerController.text,
-  //     height: heightController.text,
-  //     weight: weightController.text,
-  //     illnes_type: illnessTypeController.text,
-  //     symptoms: symptomsController.text,
-  //     first_aid: firstAidController.text,
-  //   );
-  //
-  //   await addStudentPost.addStudent(std);
-  //   return true;  // Indicating the addition was successful
-  // }
-
-
-
-
-
-
 }

@@ -6,7 +6,9 @@ import 'package:letsgohome/utils/api_endpoints.dart';
 
 class SchoolController extends GetxController {
   final RxString commingAlarmController = "On".obs;
+  final commingAlarmBool = false.obs;
   final RxString outAlarmController = "On".obs;
+  final outAlarmBool = false.obs;
   final RxString levelController = "Elementary".obs;
   final RxString schoolController = "".obs;
 
@@ -41,25 +43,32 @@ class SchoolController extends GetxController {
   void handleDropdownChangeComming(String? value) {
     if (value != null) {
       if(value =="On"){
-      commingAlarmController.value = 'true';
+      commingAlarmController.value = 'On';
+      commingAlarmBool.value = true;
       print("objectcommingAlarmController.value $commingAlarmController.value");}
       else if(value == "OFF"){
-        commingAlarmController.value='false';
+        commingAlarmController.value='OFF';
+        commingAlarmBool.value = false;
       }
 
     }
-    ;
+
+    print("objectcommingAlarmController.value ${commingAlarmBool.value} ${commingAlarmController.value}");
   }
 
   void handleDropdownChangeOut(String? value) {
     if (value != null) {
       if (value == 'On') {
-        outAlarmController.value = "true";
-        print("objectout gAlarmController.value $outAlarmController.value");
+        outAlarmController.value = "On";
+        outAlarmBool.value = true;
+        print("objectout gAlarmController.value ${outAlarmBool.value} = true;");
       } else if (value == 'OFF') {
-        outAlarmController.value = 'false';
+        outAlarmController.value = 'OFF';
+        outAlarmBool.value = false;
       }
     }
+
+    print("outAlarmController.value ${outAlarmBool.value} ${outAlarmController.value}");
   }
 
   // bool handleDropdownChangeOut(String? value) {

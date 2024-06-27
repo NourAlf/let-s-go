@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:letsgohome/component/evelatedbutton_set.dart';
 import 'package:letsgohome/screens/homepage.dart';
 import 'package:letsgohome/screens/register_page.dart';
-import 'package:letsgohome/screens/settingsPage.dart';
 import 'package:letsgohome/screens/students_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -57,7 +56,7 @@ print("response.code ${response.statusCode}");
           Stack(
             children: [
               Container(
-                height: 129,
+                height: MediaQuery.of(context).size.height*0.15,
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   color: Color(0xFF5C955D),
@@ -67,16 +66,16 @@ print("response.code ${response.statusCode}");
                   ),
                 ),
               ),
-              Positioned(
-                top: 30,
-                left: 20,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const SettingsPage()));
-                  },
-                  icon: const Icon(Icons.arrow_back),
-                ),
-              ),
+              // Positioned(
+              //   top: 30,
+              //   left: 20,
+              //   child: IconButton(
+              //     onPressed: () {
+              //       Navigator.of(context).push(MaterialPageRoute(builder: (context) => const SettingsPage()));
+              //     },
+              //     icon: const Icon(Icons.arrow_back,color: Colors.white,),
+              //   ),
+              // ),
               const Positioned(
                 top: 40,
                 left: 50,
@@ -98,12 +97,9 @@ print("response.code ${response.statusCode}");
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: ListTile(
-              leading: CircleAvatar(
+              leading: const CircleAvatar(
                 radius: 50,
-                child: Image.asset(
-                  'assets/student.png',
-                  fit: BoxFit.cover,
-                ),
+                child:Icon(Icons.person_outline,color:  Color(0xFF5C955D),),
               ),
               title: Text(
                 parentName, // Display parent's name
@@ -122,21 +118,21 @@ print("response.code ${response.statusCode}");
           ),
           const SizedBox(height: 20),
           ElevatedButtonWidget(
-            image: 'modify.png',
+           icon:Icons.edit,
             text: "Edit Information",
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(builder: (context) => const RegisterPage()));
             },
           ),
           ElevatedButtonWidget(
-            image: 'student.png',
+            icon: Icons.person_outline,
             text: "My Children",
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(builder: (context) => const StudentsPage()));
             },
           ),
           ElevatedButtonWidget(
-            image: 'logout.png',
+            icon: Icons.logout_outlined,
             text: "Logout",
             onPressed: () async {
               final SharedPreferences prefs = await _prefs;
